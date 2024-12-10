@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using EduERPApi.Infra;
+using EduERPApi.Data;
+
 namespace EduERPApi.Controllers
 {
     [Route("api/[controller]")]
@@ -19,11 +21,33 @@ namespace EduERPApi.Controllers
             _unitOfWork = unitOfWork;
             _env = env;
         }
+        [HttpGet("File/{SchId}")]
+        public IActionResult GetQuestionPaper(Guid SchId)
+        {
+            try
+            {
+                var SelSch = _unitOfWork.ExamScheduleRepo.GetById(SchId);
+                if(SelSch!=null && SelSch.ExamPaperId!=Guid.Empty)
+                {
+                    string BaseFolderPath = _env.ContentRootPath;
+                    string FilePath = $"{BaseFolderPath}/{EXAM_PAPSERS_FILE_FOLDER}";
+                    byte[] content=FileLoadandSave.ReadContent(FilePath, SelSch.ExamPaperId.ToString());
+                    string ContentString=Convert.ToBase64String(content);
+                    return Ok(new { Status = 1, Data = ContentString });
+                }                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return BadRequest(new { Status = 0, Data = 2104, Message = "Error In Getting Question Paper" });
+        }
         [HttpGet("ByExamId/{ExamId}")]
         public IActionResult GetByExamId(Guid ExamId)
         {
             try
             {
+             
                 var Res = _unitOfWork.ExamScheduleRepo.GetByParentId(ExamId);
                 return Ok(new { Status = 1, Data = Res });
             }

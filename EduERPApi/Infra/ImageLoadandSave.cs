@@ -18,7 +18,7 @@ namespace EduERPApi.Infra
                 {
                     ms.Write(buffer, 0, bytesRead);
                 }
-                Offset += bytesRead;
+                //Offset += bytesRead;
             } while (bytesRead != 0);
             fs.Close();
             byte[] TotalBytes= ms.ToArray();

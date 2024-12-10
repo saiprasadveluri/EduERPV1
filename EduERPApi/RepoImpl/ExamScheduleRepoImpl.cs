@@ -38,7 +38,17 @@ namespace EduERPApi.RepoImpl
 
         public ExamScheduleDTO GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return _context.ExamSchedules.Where(sh => sh.ExamScheduleId == id).
+                    Select(sh => new ExamScheduleDTO()
+                    {
+                        ExamScheduleId=sh.ExamScheduleId,
+                        ExamPaperId=sh.ExamPaperFileId,
+                        ExamDate=sh.ExamDate,
+                        ExamTime=sh.ExamTime,
+                        ExamId=sh.ExamId,
+                        Notes=sh.Notes,
+                        StreamSubjectMapId=sh.StreamSubjectMapId
+                    }).FirstOrDefault();
         }
 
         public bool Update(Guid key, ExamScheduleDTO item)
