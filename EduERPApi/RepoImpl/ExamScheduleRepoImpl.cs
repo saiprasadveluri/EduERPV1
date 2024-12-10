@@ -1,4 +1,5 @@
-﻿using EduERPApi.Data;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using EduERPApi.Data;
 using EduERPApi.DTO;
 using EduERPApi.Repo;
 
@@ -33,7 +34,13 @@ namespace EduERPApi.RepoImpl
 
         public bool Delete(Guid key)
         {
-            throw new NotImplementedException();
+            var Rec= _context.ExamSchedules.Where(sh => sh.ExamScheduleId == key).FirstOrDefault();
+            if(Rec!=null)
+            {
+                _context.ExamSchedules.Remove(Rec);
+                return true;
+            }
+            return false;
         }
 
         public ExamScheduleDTO GetById(Guid id)
@@ -62,6 +69,7 @@ namespace EduERPApi.RepoImpl
                        join ssobj in _context.StreamSubjectMaps on obj.StreamSubjectMapId equals ssobj.StreamSubjectMapId
                        join ssub in _context.Subjects on ssobj.SubjectId equals ssub.SubjectId
                        where obj.ExamId == ExamId
+                       orderby obj.ExamDate descending
                        select new ExamScheduleDTO()
                        {
                            ExamScheduleId = obj.ExamScheduleId,

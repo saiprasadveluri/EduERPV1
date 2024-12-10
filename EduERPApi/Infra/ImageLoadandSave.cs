@@ -46,12 +46,21 @@ namespace EduERPApi.Infra
             fs.Close();            
         }
 
-        public static void DeleteFile(string folderpath,string fileGuid)
+        public static bool DeleteFile(string folderpath,string fileGuid)
         {
-            if(File.Exists(folderpath+"/"+ fileGuid))
+            try
             {
-                File.Delete(folderpath + "/" + fileGuid);
+                if (File.Exists(folderpath + "/" + fileGuid))
+                {
+                    File.Delete(folderpath + "/" + fileGuid);
+                }
+                return true;
             }
+            catch(Exception ex)
+            {
+
+            }
+            return false;
         }
 
     }
