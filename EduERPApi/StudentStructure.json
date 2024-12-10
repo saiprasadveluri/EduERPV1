@@ -1,0 +1,95 @@
+{
+  "Header": true,
+  "RowStructure": [
+    {
+      "name": "RegdNumber",
+      "index": 1,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "Name",
+      "index": 2,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "DateOfBirth",
+      "index": 3,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "DateOfJoining",
+      "index": 4,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "Address",
+      "index": 5,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "Email",
+      "index": 6,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "Phone",
+      "index": 7,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": false,
+      "LangNumber": 0
+
+    },
+    {
+      "name": "AddlDataJson",
+      "index": 8,
+      "IsStringOrDate": true,
+      "optional": true,
+      "IsLanguage": false,
+      "LangNumber": 0
+    },
+    {
+      "name": "Lang",
+      "index": 9,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": true,
+      "LangNumber": 1
+    },
+    {
+      "name": "Lang",
+      "index": 10,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": true,
+      "LangNumber": 2
+    }
+    
+
+
+  ]
+ }

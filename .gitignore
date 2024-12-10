@@ -1,0 +1,6 @@
+EduERP.sln
+EduERPApi/bin/
+EduERPApi/EduERPApi.csproj
+EduERPApi/EduERPApi.csproj.user
+EduERPApi/obj/
+.vs/
