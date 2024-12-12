@@ -117,14 +117,23 @@ namespace EduERPApi.RepoImpl
                                        select obj.StreamSubjectMapId).FirstOrDefault();
                     if(MappedSubId!=default(Guid))
                     {
-                        StudentLanguagesDTO studentLanguagesDTO = new StudentLanguagesDTO()
+                        /*StudentLanguagesDTO studentLanguagesDTO = new StudentLanguagesDTO()
+                        {
+                            LangNumber = langData.LangNumber,
+                            StudentYearStreamMapId = StuMapID,
+                            SubjectMapId = MappedSubId,
+                            StudentLangId = Guid.NewGuid()
+                        };*/
+                        StudentLanguage studentLanguage = new()
                         {
                             LangNumber = langData.LangNumber,
                             StudentYearStreamMapId = StuMapID,
                             SubjectMapId = MappedSubId,
                             StudentLangId = Guid.NewGuid()
                         };
-                        dto.LangData.Add(studentLanguagesDTO);
+                        _context.StudentLanguages.Add(studentLanguage);
+                        
+                        //dto.LangData.Add(studentLanguagesDTO);
                     }
                     else
                     {

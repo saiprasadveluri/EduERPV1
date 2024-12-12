@@ -15,5 +15,10 @@ namespace EduERPApi.DTO
         public string SubjectCode {  get; set; }
 
         public int Status { get; set; }
+
+        [Required]
+        public int IsLanguageSubject { get; set; }
+
+        public int? LanguageNumber { get; set; }
     }
 }

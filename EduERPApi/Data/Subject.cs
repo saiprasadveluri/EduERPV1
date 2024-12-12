@@ -20,7 +20,12 @@ namespace EduERPApi.Data
         [Required]
         [DefaultValue(1)]
         public int Status { get; set; }
-        
+
+        [Required]
+        [DefaultValue(0)]
+        public int IsLanguageSubject { get; set; }
+
+        public int? LanguageNumber { get; set; }
         
         //Nav Props
         public Organization ParentOrganization { get; set; }

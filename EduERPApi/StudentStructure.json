@@ -87,6 +87,14 @@
       "optional": false,
       "IsLanguage": true,
       "LangNumber": 2
+    },
+    {
+      "name": "Lang",
+      "index": 11,
+      "IsStringOrDate": true,
+      "optional": false,
+      "IsLanguage": true,
+      "LangNumber": 3
     }
     
 
