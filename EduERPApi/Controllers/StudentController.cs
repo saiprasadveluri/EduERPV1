@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FileImportLibrary;
-using FileImportLibrary.DTO;
+using EduERPApi.BusinessLayer;
 
 namespace EduERPApi.Controllers
 {
@@ -13,12 +13,12 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
         IConfiguration _cfg;
-        public StudentController(UnitOfWork unitOfWork,IConfiguration cfg)
+        private Business _businessObj;
+        public StudentController(Business businessObj, IConfiguration cfg)
         {
-            _unitOfWork = unitOfWork;
-            _cfg= cfg;
+            _businessObj = businessObj;
+            _cfg = cfg;
         }
 
         [HttpPost("Bulk")]
@@ -27,41 +27,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var SelOrgId=Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                if (inp.inpFile!=null)
-                {
-
-                    string StructureFileName=_cfg.GetValue<string>("EntityStructurePath:StudentInfoStructure");
-
-                    var importComponent = new EntityImport<ParsedStudentInfo>(StructureFileName);
-
-                    StudentExcelParser parser = new StudentExcelParser(inp.inpFile.OpenReadStream());
-                    importComponent.SetParser(parser);
-                    var StdInfoDTOList = importComponent.ReadContent();
-                   //var OrgSubjList= _unitOfWork.SubjectRepo.GetByParentId(SelOrgId);
-                    foreach(var stdInfoObj in  StdInfoDTOList)
-                    {
-                        StudentInfoDTO stuObj = new StudentInfoDTO()
-                        {
-                            OrgId = SelOrgId,
-                            AcdYearId=inp.AcdYearId.Value,
-                            StreamId=inp.StreamId.Value,
-                            Email=stdInfoObj.Email,
-                            Name=stdInfoObj.Name,
-                            Phone=stdInfoObj.Phone,
-                            Address=stdInfoObj.Address,
-                            DateOfBirth = stdInfoObj.DateOfBirth,
-                            DateOfJoining = stdInfoObj.DateOfJoining,
-                            Status=1,
-                            Password="MyPassword",
-                            RegdNumber=stdInfoObj.RegdNumber,
-                            parsedLangData=stdInfoObj.LangData
-                        };                        
-                        _unitOfWork.StudentInfoRepo.Add(stuObj);
-                    }
-                    _unitOfWork.SaveAction();
-                    return Ok(new { Status = 1, Data = "Success" });
-                }                
+                bool Result = _businessObj.StudentBulkAdd(inp);
+                if(Result)
+                    return Ok(new { Status = 1, Data = "Success" });                        
 
             }
             catch (Exception ex)
@@ -77,9 +45,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                    inp.OrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                    Guid NewStudentId = _unitOfWork.StudentInfoRepo.Add(inp);
-                    return Ok(new { Status = 1, Data = NewStudentId });                
+               (Guid newUserId,bool Status)= _businessObj.AddStudent(inp);
+                if(Status)
+                    return Ok(new { Status = 1, Data = newUserId });                
                 
             }
             catch(Exception ex)

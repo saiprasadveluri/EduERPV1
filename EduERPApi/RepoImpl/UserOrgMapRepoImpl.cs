@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EduERPApi.RepoImpl
 {
 
-    public class UserOrgMapRepoImpl : IRepo<UserOrgMapDTO>,IRawRepo<UserOrgInfoDTO, Guid>
+    public class UserOrgMapRepoImpl : IRepo<UserOrgMapDTO>
     {
         EduERPDbContext _context;
         public UserOrgMapRepoImpl(EduERPDbContext context)
@@ -60,15 +60,20 @@ namespace EduERPApi.RepoImpl
             return false ;
         }
 
-        public Guid ExecuteRaw(UserOrgInfoDTO inp)
+        public Guid GetSelUserOrgMapIdObj(UserOrgInfoDTO inp)
         {
-            var SelUserOrgMapIdObj = _context.UserOrgMaps.FromSql($"Select * from UserOrgMaps where UserId={inp.UserId} AND OrgId={inp.OrgId}").FirstOrDefault();
-            if(SelUserOrgMapIdObj != null)
-            {
-                return SelUserOrgMapIdObj.UserOrgMapId;
-            }
-            else
-                return Guid.Empty;
+            var UserOrgMapId=_context.UserOrgMaps.Where(m => m.UserId == inp.UserId && m.OrgId == inp.OrgId).Select(m => m.UserOrgMapId).FirstOrDefault();
+            return UserOrgMapId;
         }
+        //public Guid ExecuteRaw(UserOrgInfoDTO inp)
+        //{
+        //    var SelUserOrgMapIdObj = _context.UserOrgMaps.FromSql($"Select * from UserOrgMaps where UserId={inp.UserId} AND OrgId={inp.OrgId}").FirstOrDefault();
+        //    if(SelUserOrgMapIdObj != null)
+        //    {
+        //        return SelUserOrgMapIdObj.UserOrgMapId;
+        //    }
+        //    else
+        //        return Guid.Empty;
+        //}
     }
 }

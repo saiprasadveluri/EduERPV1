@@ -19,6 +19,9 @@ namespace EduERPApi.DTO
         [Required]
         
         public DateTime EndDate { get; set; }
+        [Required]
+        public Guid AcdYearId { get; set; }
+        public string? AcdYearText { get; set; }
 
     }
 }

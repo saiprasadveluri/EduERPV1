@@ -58,5 +58,6 @@ namespace EduERPApi.Controllers
             }
             return BadRequest(new { Status = 0, Data = 2001, Message = "Error In Adding record" });
         }
+        
     }
 }

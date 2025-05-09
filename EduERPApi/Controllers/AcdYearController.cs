@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,22 +10,20 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class AcdYearController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-     
-        public AcdYearController(UnitOfWork unitOfWork, IConfiguration cfg)
+        IConfiguration _cfg;
+        private Business _businessObj;
+
+        public AcdYearController(Business businessObj, IConfiguration cfg)
         {
-            _unitOfWork = unitOfWork;          
+            _businessObj = businessObj;
+            _cfg = cfg;
         }
-        [HttpGet]
+
         public IActionResult GetAll()
         {
             try
             {
-                var data=_unitOfWork.AcdYearRepo.GetAll().Select(r => new AcdYearDTO()
-                {
-                    AcdYearId = r.AcdYearId,
-                    AcdYearText = r.AcdYearText,
-                }).ToList();
+               List<AcdYearDTO> data= _businessObj.GetAllAcdYears();
                 return Ok(new { Status = 1, Data = data });
             }
             catch(Exception ex)

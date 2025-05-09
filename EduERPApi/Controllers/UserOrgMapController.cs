@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class UserOrgMapController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-        public UserOrgMapController(UnitOfWork unitOfWork)
+        IConfiguration _cfg;
+        private Business _businessObj;
+        public UserOrgMapController(Business businessObj, IConfiguration cfg)
         {
-            _unitOfWork = unitOfWork;
+            _businessObj = businessObj;
+            _cfg = cfg;
         }
 
         [HttpPost]
@@ -20,9 +23,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var newMapId = _unitOfWork.UserOrgMapRepoImpl.Add(inp);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = newMapId });
+                (Guid mapId, bool Status) = _businessObj.AddUserOrgMap(inp); //_unitOfWork.UserOrgMapRepoImpl.Add(inp);
+                if(Status)
+                return Ok(new { Status = 1, Data = mapId });
             }
             catch(Exception ex)
             {
@@ -36,9 +39,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Status = _unitOfWork.UserOrgMapRepoImpl.Update(Newinp.UserOrgMapId, Newinp);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = Status });
+               bool Res= _businessObj.UpdateUserOrgMap(Newinp);
+
+                return Ok(new { Status = 1, Data = Res });
             }
             catch (Exception ex)
             {
@@ -51,8 +54,8 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Status = _unitOfWork.UserOrgMapRepoImpl.Delete(Id);
-                _unitOfWork.SaveAction();
+                bool Status=_businessObj.DeleteUserOrgMap(Id);
+                if(Status)
                 return Ok(new { Status = 1, Data = Status });
             }
             catch (Exception ex)

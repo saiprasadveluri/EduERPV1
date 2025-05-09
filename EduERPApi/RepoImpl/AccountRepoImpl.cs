@@ -1,4 +1,5 @@
-﻿using EduERPApi.Data;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using EduERPApi.Data;
 using EduERPApi.DTO;
 using EduERPApi.Repo;
 using Microsoft.Data.SqlClient;
@@ -35,6 +36,33 @@ namespace EduERPApi.RepoImpl
             throw new NotImplementedException();
         }
 
+
+        public (LoginResultDTO,bool) GetLoginResult(LoginDataDTO inp)
+        {
+            LoginResultDTO loginResultDTO = new LoginResultDTO();
+            bool Success = false;
+            var LoggedInUser= _context.UserInfos.Include(u => u.UserOrgMapList).ThenInclude(om => om.CurOrganization)
+                .Where(ui => ui.UserEmail == inp.Email && ui.Password == inp.Password).FirstOrDefault();
+            if(LoggedInUser!=null)
+            {
+                Success = true;
+                loginResultDTO.UserId= LoggedInUser.UserId;
+                loginResultDTO.UserEmail= inp.Email;
+
+                loginResultDTO.UserOrgMapInfos = new List<UserOrgMapDTO>();
+
+                foreach (var usermap in LoggedInUser.UserOrgMapList)
+                {
+                    UserOrgMapDTO usermapDto = new UserOrgMapDTO()
+                    {
+                        OrgId = usermap.OrgId,
+                        OrgName = usermap.CurOrganization.OrgName
+                    };
+                    loginResultDTO.UserOrgMapInfos.Add(usermapDto);
+                }
+            }
+            return (loginResultDTO, Success);            
+        }
         public LoginResultDTO ExecuteRaw(LoginDataDTO inp)
         {
             var userEmail = new SqlParameter("UserEmail", inp.Email);

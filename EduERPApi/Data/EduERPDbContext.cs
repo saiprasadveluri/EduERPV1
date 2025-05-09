@@ -44,6 +44,8 @@ namespace EduERPApi.Data
         public DbSet<ExamType> ExamTypes { get; set; }
         public DbSet<ExamSchedule> ExamSchedules { get; set; }
         public DbSet<Exam> Exams { get; set; }
+
+        public DbSet<StudentExamScheduleMap> StudentExamScheduleMaps { get; set; }
         public EduERPDbContext(DbContextOptions opts) :base(opts)
         {
            

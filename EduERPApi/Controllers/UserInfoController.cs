@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class UserInfoController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-        public UserInfoController(UnitOfWork unitOfWork)
+        IConfiguration _cfg;
+        private Business _businessObj;
+        public UserInfoController(Business businessObj, IConfiguration cfg)
         {
-            _unitOfWork=unitOfWork;
+            _businessObj = businessObj;
+            _cfg = cfg;
         }
 
         [HttpGet("{Id}")]
@@ -20,13 +23,14 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var UserList = _unitOfWork.UserInfoRepo.GetByParentId(Id);
+                var UserList = _businessObj.GetAllUsersByOrognization(Id);
                 return Ok(new { Status = 1, Data = UserList });
             }
             catch(Exception ex)
             {
-                return BadRequest(new { Status = 0, Data = 102, Message = ex.Message });
+                
             }
+            return BadRequest(new { Status = 0, Data = 102, Message = "Error In operation" });
         }
 
         [HttpPost]
@@ -34,22 +38,16 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                Guid NewUserId = _unitOfWork.UserInfoRepo.Add(inp);
-                Guid UserOrgMapId = _unitOfWork.UserOrgMapRepoImpl.Add(
-                    new UserOrgMapDTO()
-                    {
-                        OrgId=inp.OrgId,
-                        UserId=NewUserId
-                    });
-                    _unitOfWork.SaveAction();
-                    
+                ((Guid NewUserId,Guid UserOrgMapId), bool Status)= _businessObj.AddUserInfo(inp);
+                if(Status)
                     return Ok(new { Status = 1, Data = new { NewUserId, UserOrgMapId } });
                
             }
             catch(Exception ex)
             {
-                return BadRequest(new { Status = 0, Data = 100,Message=ex.Message });
+                
             }
+            return BadRequest(new { Status = 0, Data = 100, Message = ex.Message });
         }
     }
 }

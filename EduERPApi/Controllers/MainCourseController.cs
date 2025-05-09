@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +11,17 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class MainCourseController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-        public MainCourseController(UnitOfWork unitOfWork)
+        Business _businessObj;
+        public MainCourseController(Business businessObj)
         {
-            _unitOfWork = unitOfWork;
+            _businessObj = businessObj;
         }
         [HttpGet("Org")]
         public async Task<IActionResult> GetCoursesByOrgId() 
         {
             try
             {
-                var OrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                var Res = _unitOfWork.MainCourseRepo.GetByParentId(OrgId);
+                var Res = _businessObj.GetCoursesByOrgId();                
                 return Ok(new { Status = 1, Data = Res });
             }
             catch(Exception ex)
@@ -36,39 +36,15 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                course.OrgId = SelOrgId;
-                Guid NewCourseId = _unitOfWork.MainCourseRepo.Add(course);
-                
-                if (course.IsSpecializationsAvailable == 0)
-                {
-                    Guid NewSplId = _unitOfWork.CourseSpecialzationsRepo.Add(new SpecializationsDTO()
-                    {
-                        MainCourseId = NewCourseId,
-                        SpecializationName = course.CourseName,
-                        Status = 1
-                    });
-                    for (int year = 1; year <= course.DurationInYears; ++year)
-                    {
-                        for (int term = 1; term <= course.NumOfTermsInYear; ++term)
-                        {
-                            _unitOfWork.CourseDetailRepo.Add(new CourseDetailDTO()
-                            {
-                                CourseDetailId = Guid.NewGuid(),
-                                SpecializationId = NewSplId,
-                                Year = year,
-                                Term = term
-                            });
-                        }
-                    }
-                }
-                _unitOfWork.SaveAction();
+               (Guid NewCourseId, bool Status)= _businessObj.AddNewMainCourse(course);
+                if(Status)
                 return Ok(new { Status = 1, Data = NewCourseId });
             }
             catch(Exception ex)
             {
-                return BadRequest(new { Status = 0, Data = 301, Message = ex.Message });
+                
             }
+            return BadRequest(new { Status = 0, Data = 301, Message = "Error In Operation" });
         }
         
     }

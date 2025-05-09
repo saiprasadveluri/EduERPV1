@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -7,13 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace EduERPApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]    
+    [ApiController]
     public class OrganizationController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-        public OrganizationController(UnitOfWork unitOfWork)
+        IConfiguration _cfg;
+        private Business _businessObj;
+        public OrganizationController(Business businessObj, IConfiguration cfg)
         {
-            _unitOfWork = unitOfWork;
+            _businessObj = businessObj;
+            _cfg = cfg;
         }
         
         [HttpGet]
@@ -21,12 +24,13 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res=_unitOfWork.OrganizationRepo.GetAll();
+                var Res = _businessObj.GetAllOrganizations();
+                
                 return Ok(new { Status = 1, Data = Res });
             }
             catch(Exception ex)
             {
-                return BadRequest(new { Status = 0, Data = 201, Message = ex.Message });
+                return BadRequest(new { Status = 0, Data = 201, Message = "Error In Fetching Records" });
             }
         }
 
@@ -35,14 +39,15 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res = _unitOfWork.OrganizationRepo.Add(inp);
-                _unitOfWork.SaveAction();
+                (Guid Res,bool Status) = _businessObj.AddOrganization(inp);// _unitOfWork.OrganizationRepo.Add(inp);
+                if(Status)
                 return Ok(new { Status = 1, Data = Res });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Status = 0, Data = 202, Message = ex.Message });
+                //return BadRequest(new { Status = 0, Data = 202, Message = "Error In adding Organization" });
             }
+            return BadRequest(new { Status = 0, Data = 202, Message = "Error In adding Organization" });
         }
     }
 }

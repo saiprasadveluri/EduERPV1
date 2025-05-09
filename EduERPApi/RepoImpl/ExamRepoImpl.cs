@@ -22,7 +22,8 @@ namespace EduERPApi.RepoImpl
                 ExamTitle = item.ExamTitle,
                 StartDate = item.StartDate,
                 EndDate = item.EndDate,
-                CourseDetialId = item.CourseDetialId
+                CourseDetialId = item.CourseDetialId,
+                AcdYearId=item.AcdYearId
             };
             _context.Add(exm);
             return exm.ExamId;
@@ -37,6 +38,7 @@ namespace EduERPApi.RepoImpl
         {
             var Res = (from obj in _context.Exams
                        join extObj in _context.ExamTypes on obj.ExamTypeId equals extObj.ExamTypeId
+                       join acdYearObj in _context.AcdYears on obj.AcdYearId equals acdYearObj.AcdYearId
                        where obj.ExamId == id
                        select new ExamDTO()
                        {
@@ -45,7 +47,8 @@ namespace EduERPApi.RepoImpl
                            StartDate = obj.StartDate,
                            EndDate = obj.EndDate,
                            ExamTitle = obj.ExamTitle,
-                           CourseDetialId = obj.CourseDetialId
+                           CourseDetialId = obj.CourseDetialId,
+                           AcdYearText=acdYearObj.AcdYearText
 
                        }).FirstOrDefault();
             return Res;

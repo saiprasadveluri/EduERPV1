@@ -20,10 +20,8 @@ namespace EduERPApi.RepoImpl
             {
                 OrgId = item.OrgId.Value,
                 SubjectName = item.SubjectName,
-                SubjCode = item.SubjectCode,
+                SubjCode=item.SubjectCode,
                 SubjectId = Guid.NewGuid(),
-                IsLanguageSubject = item.IsLanguageSubject,
-                LanguageNumber = item.IsLanguageSubject == 1 ? item.LanguageNumber : 0,
                 Status = 1
             };
             _context.Add(subject);
@@ -59,9 +57,7 @@ namespace EduERPApi.RepoImpl
                       {
                           SubjectId = sobj.SubjectId,
                           SubjectName = sobj.SubjectName,
-                          SubjectCode= sobj.SubjCode,
-                          IsLanguageSubject=sobj.IsLanguageSubject,
-                          LanguageNumber=sobj.LanguageNumber
+                          SubjectCode= sobj.SubjCode
                       }).ToList();
             return res;
 

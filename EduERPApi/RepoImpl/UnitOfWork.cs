@@ -12,17 +12,20 @@ namespace EduERPApi.RepoImpl
     {
         EduERPDbContext _context;
         IDbContextTransaction _transaction;
-        IRepo<UserInfoDTO> _userInfoRepo;
+
+        AccountRepoImpl _accountRepo;
+        UserInfoRepoImpl _userInfoRepo;
+
         IRepo<UserFeatureRoleDTO> _userFeatureRoleRepo;
         IRepo<OrganizationDTO> _organizationRepo;
         IRepo<MainCourseDTO> _mainCourseRepo;
         IRepo<SpecializationsDTO> _specializationsRepo;
         IRepo<CourseDetailDTO> _courseDetailRepo;
-        IRepo<LoginDataDTO> _accountRepo;
+       
         IRepo<AppUserFeatureRoleMapDTO> _appUserFeatureRoleMapRepo;
         IRepo<FeatureRoleDTO> _featureRoleRepo;
         IRepo<OrgnizationFeatureSubscriptionDTO> _orgnizationFeatureSubscriptionRepo;
-        IRepo<UserOrgMapDTO> _userOrgMapRepo;
+        UserOrgMapRepoImpl _userOrgMapRepo;
         IRepo<ModuleFeatureDTO> _moduleFeatureRepo;
         IRepo<StudentInfoDTO> _studentInfoRepo;
         IRepo<FeeHeadMasterDTO> _feeHeadMasterRepo;
@@ -48,6 +51,8 @@ namespace EduERPApi.RepoImpl
 
 
         IRepo<ExamScheduleDTO> _examScheduleRepo;
+
+        #region Repo Properties
 
         public IRepo<ExamScheduleDTO> ExamScheduleRepo
         {
@@ -253,7 +258,7 @@ namespace EduERPApi.RepoImpl
                 return _moduleFeatureRepo;
             }
         }
-        public IRepo<UserOrgMapDTO> UserOrgMapRepoImpl
+        public UserOrgMapRepoImpl UserOrgMapRepoImpl
         {
             get
             {
@@ -299,7 +304,7 @@ namespace EduERPApi.RepoImpl
                 return _appUserFeatureRoleMapRepo;
             }
         }
-        public IRepo<LoginDataDTO> AccountRepo
+        public AccountRepoImpl AccountRepo
         {
             get
             {
@@ -357,7 +362,7 @@ namespace EduERPApi.RepoImpl
             }
         }
 
-        public IRepo<UserInfoDTO> UserInfoRepo { 
+        public UserInfoRepoImpl UserInfoRepo { 
             get
             {
                 if(_userInfoRepo == null)
@@ -379,6 +384,7 @@ namespace EduERPApi.RepoImpl
                 return _userFeatureRoleRepo;
             }
         }
+        #endregion
         public UnitOfWork(EduERPDbContext context)
         {
             _context = context;

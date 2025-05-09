@@ -21,12 +21,17 @@ namespace EduERPApi.Data
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
+        [Required]
+        public Guid AcdYearId { get; set; }
 
 
         [ForeignKey(nameof(ExamTypeId))]
         public ExamType ParentExamType { get; set; }
 
         [ForeignKey(nameof(CourseDetialId))]
-        public CourseDetail ParentCourse { get; set; } 
+        public CourseDetail ParentCourse { get; set; }
+
+        [ForeignKey(nameof(AcdYearId))]
+        public AcdYear ParentAcdYear { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EduERPApi.Infra;
+using EduERPApi.BusinessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ builder.Services.AddControllers(mvcOpts => { mvcOpts.Filters.Add<OrganizationVal
 {
     options.JsonSerializerOptions
     .PropertyNamingPolicy = null;
-}); ;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var services = builder.Services;
@@ -26,7 +27,11 @@ services.AddDbContext<EduERPDbContext>(opts =>
 {
     opts.UseSqlServer(Config.GetConnectionString("EduERPDbConnectionString"));
 });
+
+services.AddHttpContextAccessor();
+services.AddScoped<ContextHelper>();
 services.AddScoped<UnitOfWork>();
+services.AddScoped<Business>();
 services.AddAuthentication(cfg =>
 {
     cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
