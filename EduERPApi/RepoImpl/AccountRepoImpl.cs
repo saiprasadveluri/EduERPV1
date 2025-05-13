@@ -56,7 +56,8 @@ namespace EduERPApi.RepoImpl
                     UserOrgMapDTO usermapDto = new UserOrgMapDTO()
                     {
                         OrgId = usermap.OrgId,
-                        OrgName = usermap.CurOrganization.OrgName
+                        OrgName = usermap.CurOrganization.OrgName,
+                        
                     };
                     loginResultDTO.UserOrgMapInfos.Add(usermapDto);
                 }

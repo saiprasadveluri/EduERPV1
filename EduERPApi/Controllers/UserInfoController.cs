@@ -47,7 +47,7 @@ namespace EduERPApi.Controllers
             {
                 
             }
-            return BadRequest(new { Status = 0, Data = 100, Message = ex.Message });
+            return BadRequest(new { Status = 0, Data = 100, Message="Error In adding User" });
         }
     }
 }

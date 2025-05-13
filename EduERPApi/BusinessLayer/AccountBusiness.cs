@@ -32,6 +32,10 @@ namespace EduERPApi.BusinessLayer
         private string GenerateAccessToken(string OrgId, string UserID, Guid UserOrgMapId)
         {
             List<AppUserFeatureRoleMapDTO> RoleList = GetUserRoles(UserOrgMapId);
+            if(RoleList.Count==0)
+            {
+                throw new Exception("Access Roles Empty");
+            }
             string secret = _cfg.GetSection("JwtConfig:SigningKey").Value;
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);

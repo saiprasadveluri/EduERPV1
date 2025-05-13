@@ -18,6 +18,7 @@ namespace EduERPApi.DTO
 
         [Required]
         public int Status { get; set; } = 1;
+
         //public UserOrgMapDTO UserOrgMapObj { get; set; }
     }
 }
