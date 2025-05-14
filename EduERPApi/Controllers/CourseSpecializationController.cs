@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,11 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class CourseSpecializationController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
+        Business _business;
        
-        public CourseSpecializationController(UnitOfWork unitOfWork)
+        public CourseSpecializationController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
             
         }
 
@@ -23,7 +24,7 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res=_unitOfWork.CourseSpecialzationsRepo.GetByParentId(id);
+                var Res = _business.GetSpecialzationsByCourse(id);//_unitOfWork.CourseSpecialzationsRepo.GetByParentId(id);
                 return Ok(new { Status = 1, Data = Res });
             }
             catch(Exception ex)
@@ -38,27 +39,9 @@ namespace EduERPApi.Controllers
             string ErrorMessage = string.Empty;
             try
             {
-                var mainCourse = _unitOfWork.MainCourseRepo.GetById(inp.MainCourseId);
-                if (mainCourse != null && mainCourse.IsSpecializationsAvailable==1)
-                {
-                    var NewSplId = _unitOfWork.CourseSpecialzationsRepo.Add(inp);
-
-                    for (int year = 1; year <= mainCourse.DurationInYears; ++year)
-                    {
-                        for (int term = 1; term <= mainCourse.NumOfTermsInYear; ++term)
-                        {
-                            _unitOfWork.CourseDetailRepo.Add(new CourseDetailDTO()
-                            {
-                                CourseDetailId = Guid.NewGuid(),
-                                SpecializationId = NewSplId,
-                                Year = year,
-                                Term = term
-                            });
-                        }
-                    }
-                    _unitOfWork.SaveAction();
+                bool Success = _business.AddSpecialization(inp);
+                if(Success)
                     return Ok(new { Status = 1, Data = "Success" });
-                }
                 
             }
             catch (Exception ex)
@@ -72,12 +55,12 @@ namespace EduERPApi.Controllers
             }
             return BadRequest(new { Status = 0, Data = 1502, Message = ErrorMessage });
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteSpecialization(Guid splId)
+        [HttpDelete("SplId")]
+        public async Task<IActionResult> DeleteSpecialization(Guid SplId)
         {
             try
             {
-                var Res = _unitOfWork.CourseSpecialzationsRepo.Delete(splId);
+                var Res = _business.DeleteSpecialization(SplId);
                 return Ok(new { Status = 1, Data = Res });
             }
             catch (Exception ex)
