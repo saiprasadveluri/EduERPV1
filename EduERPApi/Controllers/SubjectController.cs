@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class SubjectController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
+        Business _business;
 
-        public SubjectController(UnitOfWork unitOfWork, IConfiguration cfg)
+        public SubjectController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
         }
         [HttpGet]
         public IActionResult GetAll()
@@ -21,7 +22,7 @@ namespace EduERPApi.Controllers
             try
             {
                 var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                var Res= _unitOfWork.SubjectRepo.GetByParentId(SelOrgId);
+                var Res= _business.GetAllSubjectsByOrganization(SelOrgId);
                 
                 return Ok(new { Status = 1, Data = Res });
             }
@@ -38,9 +39,9 @@ namespace EduERPApi.Controllers
             {
                 var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
                 dto.OrgId = SelOrgId;
-                var Res = _unitOfWork.SubjectRepo.Add(dto);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = Res });
+                (Guid SubId,bool Status) = _business.AddSubject(dto);
+                if(Status)
+                return Ok(new { Status = 1, Data = SubId });
             }
             catch (Exception ex)
             {

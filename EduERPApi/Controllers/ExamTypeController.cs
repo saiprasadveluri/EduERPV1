@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using EduERPApi.BusinessLayer;
 using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
@@ -10,18 +11,19 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class ExamTypeController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
+        //UnitOfWork _unitOfWork;
+        Business _business;
 
-        public ExamTypeController(UnitOfWork unitOfWork, IConfiguration cfg)
+        public ExamTypeController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
         }
         [HttpGet("ByCourseId/{id}")]
         public ActionResult GetByParentId(Guid id) 
         {
             try
             {
-               var Res= _unitOfWork.ExamTypeRepo.GetByParentId(id);
+                var Res = _business.GetExamTypeByCourse(id);
                 return Ok(new {Status=1,Data=Res });
             }
             catch(Exception ex)
@@ -35,9 +37,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res = _unitOfWork.ExamTypeRepo.Add(dto);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = Res });
+               (Guid id,bool status) Res= _business.AddExamType(dto);//_unitOfWork.ExamTypeRepo.Add(dto);
+                if(Res.status)
+                return Ok(new { Status = Res.status? 1:0, Data = Res.id });
             }
             catch (Exception ex)
             {

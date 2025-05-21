@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +10,18 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class SubjectTopicController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
+        Business _business;
 
-        public SubjectTopicController(UnitOfWork unitOfWork, IConfiguration cfg)
+        public SubjectTopicController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
         }
-        [HttpGet("BySubject/{subId}")]
-        public IActionResult GetAllBySubject(Guid subId)
+        [HttpGet("{subId}")]
+        public IActionResult GetAllTopicsBySubject(Guid subId)
         {
             try
             {
-                var Res = _unitOfWork.SubjectTopicRepo.GetByParentId(subId);
+                var Res = _business.GetAllSubjectTopics(subId);
                 return Ok(new { Status = 1, Data = Res });
             }
             catch(Exception exp)
@@ -30,12 +31,12 @@ namespace EduERPApi.Controllers
             return BadRequest(new { Status = 0, Data = 1801, Message = "Error In Getting Subject Topics" });
         }
         [HttpPost]
-        public IActionResult Add(SubjectTopicDTO dto)
+        public IActionResult AddTopic(SubjectTopicDTO dto)
         {
             try
             {
-               Guid newSubjectTopicId=_unitOfWork.SubjectTopicRepo.Add(dto);
-                _unitOfWork.SaveAction();
+               (Guid newSubjectTopicId,bool Status)= _business.AddSubjectTopic(dto);
+               if(Status)
                 return Ok(new { Status = 1, Data = newSubjectTopicId });
             }
             catch(Exception ex)
@@ -44,13 +45,13 @@ namespace EduERPApi.Controllers
             }
             return BadRequest(new { Status = 0, Data = 1802, Message = "Error In Adding Subject Topics" });
         }
-        [HttpDelete]
-        public IActionResult Delete(Guid key)
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(Guid Id)
         {
             try
             {
-                _unitOfWork.SubjectTopicRepo.Delete(key);
-                _unitOfWork.SaveAction();
+               bool Status=_business.DeleteSubjectTopic(Id);
+               if(Status)
                 return Ok(new { Status = 1, Data = "Success" });
             }
             catch (Exception ex)

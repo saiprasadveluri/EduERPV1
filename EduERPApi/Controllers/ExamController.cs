@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +10,19 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class ExamController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
+        //UnitOfWork _unitOfWork;
+        Business _business;
 
-        public ExamController(UnitOfWork unitOfWork, IConfiguration cfg)
+        public ExamController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
         }
         [HttpGet("{id}")]
         public IActionResult GetById(Guid Id)
         {
             try
             {
-                var Res = _unitOfWork.ExamRepo.GetById(Id);
+                var Res = _business.GetExamById(Id);
                 return Ok(new { Success = 1, Data = Res });
             }
             catch (Exception ex)
@@ -34,7 +36,7 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res=_unitOfWork.ExamRepo.GetByParentId(CourseDetialId);
+                var Res= _business.GetExamByCourseId(CourseDetialId);
                 return Ok(new { Success = 1, Data = Res });
             }
             catch(Exception ex)
@@ -48,9 +50,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var Res = _unitOfWork.ExamRepo.Add(inp);
-                _unitOfWork.SaveAction();
-                return Ok(new { Success = 1, Data = Res });
+                (Guid id,bool Status) Res = _business.AddExam(inp);
+                if(Res.Status)
+                return Ok(new { Success = 1, Data = Res.id });
             }
             catch (Exception ex)
             {
