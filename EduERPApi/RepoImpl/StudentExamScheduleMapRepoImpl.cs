@@ -16,8 +16,6 @@ namespace EduERPApi.RepoImpl
         {
             //Get the Current Exam Instence
             var CurExam = _context.Exams.FirstOrDefault(ex => ex.ExamId == ExamId);
-            //Delete the existing Map.
-            
                 
             if(CurExam!=null)
             {
@@ -74,7 +72,7 @@ namespace EduERPApi.RepoImpl
                         StudentYearStreamMapId = finalRec.StudentMapId
                     };
                     _context.StudentExamScheduleMaps.Add(obj);
-
+                    _context.SaveChanges();
                 }
                 return true;
             }

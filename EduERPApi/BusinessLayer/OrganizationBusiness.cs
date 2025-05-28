@@ -17,5 +17,11 @@ namespace EduERPApi.BusinessLayer
             var Res = _unitOfWork.OrganizationRepo.GetAll();
             return Res;
         }
+
+        public OrganizationDTO GetOrganizationById(Guid OrgId)
+        {
+            var Res = _unitOfWork.OrganizationRepo.GetById(OrgId);
+            return Res;
+        }
     }
 }

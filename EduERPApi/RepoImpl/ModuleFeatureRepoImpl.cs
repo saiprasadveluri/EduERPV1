@@ -42,12 +42,16 @@ namespace EduERPApi.RepoImpl
 
         public List<ModuleFeatureDTO> GetByParentId(Guid moduleId)
         {
-            return _context.ModuleFeatures.Where(mf => mf.ModuleId == moduleId && mf.Status == 1)
-                .Select(mf => new ModuleFeatureDTO
-                {
-                    FeatureId = mf.FeatureId,
-                    FeatureName = mf.FeatureName,
+            var Res=(from obj in _context.ModuleFeatures
+                    join mobj in _context.ApplicationModules on obj.ModuleId equals mobj.ModuleId
+                    where obj.ModuleId==moduleId
+                    select new ModuleFeatureDTO()
+                    {
+                        FeatureId = obj.FeatureId,
+                        FeatureName = obj.FeatureName,
+                        ModuleName = mobj.ModuleName
                 }).ToList();
+            return Res;
             
         }
     }

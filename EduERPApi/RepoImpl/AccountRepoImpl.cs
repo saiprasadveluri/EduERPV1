@@ -48,6 +48,7 @@ namespace EduERPApi.RepoImpl
                 Success = true;
                 loginResultDTO.UserId= LoggedInUser.UserId;
                 loginResultDTO.UserEmail= inp.Email;
+                loginResultDTO.UserDetailsJson = LoggedInUser.UserDetailsJson;
 
                 loginResultDTO.UserOrgMapInfos = new List<UserOrgMapDTO>();
 

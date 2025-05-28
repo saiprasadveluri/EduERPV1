@@ -51,9 +51,19 @@ namespace EduERPApi.RepoImpl
 
 
         IRepo<ExamScheduleDTO> _examScheduleRepo;
-
+        IRawRepo<Guid, bool> _StudentExamScheduleMapRepo;
         #region Repo Properties
-
+        public IRawRepo<Guid,bool> StudentExamScheduleMapRepo
+        {
+            get
+            {
+                if (_StudentExamScheduleMapRepo == null)
+                {
+                    _StudentExamScheduleMapRepo = new StudentExamScheduleMapRepoImpl(_context);
+                }
+                return _StudentExamScheduleMapRepo;
+            }
+        }
         public IRepo<ExamScheduleDTO> ExamScheduleRepo
         {
             get

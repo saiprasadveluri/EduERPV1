@@ -11,6 +11,7 @@ namespace EduERPApi.DTO
         public string FeatureName { get; set; }
         [Required]
         public Guid ModuleId { get; set; }
+        public string ModuleName { get; set; }
         [Required]
         public int Status { get; set; } = 1;
     }

@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,10 @@ namespace EduERPApi.Controllers
     public class StudentExamScheduleController : ControllerBase
     {
         UnitOfWork _unitOfWork;
-
-        public StudentExamScheduleController(UnitOfWork unitOfWork, IConfiguration cfg)
+        Business _business;
+        public StudentExamScheduleController(Business business)
         {
-            _unitOfWork = unitOfWork;
+            _business = business;
         }
 
         [HttpPost]
@@ -21,9 +22,8 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                //_unitOfWork.StudentExamScheduleMapRepo.ExecuteRaw(inp.ExamId);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = "Success" });
+                bool Res = _business.MapExamToStudents(inp);
+                return Ok(new { Status = Res, Data = "Success" });
             }
             catch(Exception ex)
             {

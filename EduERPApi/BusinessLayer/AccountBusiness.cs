@@ -1,4 +1,6 @@
 ﻿using Azure.Core;
+using DocumentFormat.OpenXml.Spreadsheet;
+using EduERPApi.Data;
 using EduERPApi.DTO;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +16,21 @@ namespace EduERPApi.BusinessLayer
         public (LoginResultDTO, bool) ValidateUser(LoginDataDTO data)
         {
             (LoginResultDTO dto, bool Success) Res = _unitOfWork.AccountRepo.GetLoginResult(data);
+            if(Res.dto.UserDetailsJson.Length>0)
+            {
+               SysAdminData sysData= JsonSerializer.Deserialize<SysAdminData>(Res.dto.UserDetailsJson);
+                if(sysData.IsSysAdmin==1)
+                {
+                    LoginResultDTO loginResultDto = new LoginResultDTO()
+                    {
+                        JwtToken = GetSysAdminAccessToken(Res.dto.UserId),
+                        UserId = Res.dto.UserId,
+                        IsSysAdmin=true
+                    };
+                    return (loginResultDto, true);
+                }
+            }
+            //Process Non Sys Admins
             GenerateLoginToken(Res.dto);
             return Res;
         }
@@ -29,6 +46,16 @@ namespace EduERPApi.BusinessLayer
             return GenerateAccessToken(dto.SelOrgId.ToString(), SavedUserId, orgMapId);
         }
 
+        public string GetSysAdminAccessToken(Guid UserId)
+        {
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, UserId.ToString()));
+            claims.Add(new Claim("IsSysAdmin", "1"));
+            claims.Add(new Claim("UserId", UserId.ToString()));
+           return PrepareToken(claims);
+        }
+
+
         private string GenerateAccessToken(string OrgId, string UserID, Guid UserOrgMapId)
         {
             List<AppUserFeatureRoleMapDTO> RoleList = GetUserRoles(UserOrgMapId);
@@ -36,9 +63,7 @@ namespace EduERPApi.BusinessLayer
             {
                 throw new Exception("Access Roles Empty");
             }
-            string secret = _cfg.GetSection("JwtConfig:SigningKey").Value;
-            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+            
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.NameIdentifier, UserOrgMapId.ToString()));
             claims.Add(new Claim("FeatureRoleData", JsonSerializer.Serialize(RoleList)));
@@ -49,6 +74,14 @@ namespace EduERPApi.BusinessLayer
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.FeatureRoleId.ToString()));
             }
+            return PrepareToken(claims);
+        }
+
+        private string PrepareToken(List<Claim> claims)
+        {
+            string secret = _cfg.GetSection("JwtConfig:SigningKey").Value;
+            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(issuer: _cfg["Jwt:Issuer"],
                 audience: _cfg["Jwt:Audience"],
                 claims: claims,
@@ -57,7 +90,6 @@ namespace EduERPApi.BusinessLayer
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
         private void GenerateLoginToken(LoginResultDTO inp)
         {
             string secret = _cfg.GetSection("JwtConfig:SigningKey").Value;

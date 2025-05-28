@@ -34,6 +34,22 @@ namespace EduERPApi.Controllers
             }
         }
 
+        [HttpGet("{OrgId}")]
+        public async Task<IActionResult> GetById(Guid OrgId)
+        {
+            try
+            {
+                var Res = _businessObj.GetOrganizationById(OrgId);
+                if(Res!=null)
+                return Ok(new { Status = 1, Data = Res });
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return BadRequest(new { Status = 0, Data = 201, Message = "Error In Fetching Records" });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add(OrganizationDTO inp)
         {

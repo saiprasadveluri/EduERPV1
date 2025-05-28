@@ -9,7 +9,7 @@ namespace EduERPApi.Infra
 {
     public class OrganizationValueReaderFilter:IActionFilter
     {
-        string[] BypassedControllers = { "Organization", "Account", "OrgnizationFeatureSubscription" };
+        string[] BypassedControllers = { "Organization", "Account", "OrgnizationFeatureSubscription", "ModuleFeature" };
         
         public void OnActionExecuting(ActionExecutingContext context)
         {

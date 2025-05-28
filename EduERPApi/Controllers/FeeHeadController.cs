@@ -1,4 +1,5 @@
-﻿using EduERPApi.Data;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.Data;
 using EduERPApi.DTO;
 using EduERPApi.Infra;
 using EduERPApi.RepoImpl;
@@ -13,14 +14,13 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class FeeHeadController : ControllerBase
     {
-        
-        UnitOfWork _unitOfWork;
-        IConfiguration _cfg;
 
-        public FeeHeadController(UnitOfWork unitOfWork, IConfiguration cfg)
+        Business _business;
+
+        public FeeHeadController(Business business)
         {
-            _unitOfWork = unitOfWork;
-            _cfg = cfg;
+            _business = business;
+            
         }
 
         [HttpGet("{id}")]
@@ -29,7 +29,8 @@ namespace EduERPApi.Controllers
             try
             {
 
-                var Res = _unitOfWork.FeeHeadMasterRepoImpl.GetById(id);
+                var Res = _business.GetFeeHeadById(id);
+
                 if (Res != null)
                 {
                     return Ok(new { Status = 1, Data = Res });
@@ -47,11 +48,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                inp.OrgId = SelOrgId;
-                Guid NewFeeHeadId= _unitOfWork.FeeHeadMasterRepoImpl.Add(inp);
-                _unitOfWork.SaveAction();
-                return Ok(new { Status = 1, Data = NewFeeHeadId });
+                (Guid newId,bool Res) Result=_business.AddFeeHeadMaster(inp);
+                if(Result.Res)
+                return Ok(new { Status = 1, Data = Result.newId });
             }
             catch (Exception ex)
             {
@@ -65,7 +64,7 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var FeeHeadList = _unitOfWork.FeeHeadMasterRepoImpl.GetByParentId(id);
+                var FeeHeadList = _business.GetAllFeeHeadByOrganization(id);
                 
                 return Ok(new { Status = 1, Data = FeeHeadList });
             }

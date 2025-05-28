@@ -6,9 +6,11 @@ namespace EduERPApi.DTO
     { 
         public Guid UserId { get; set; }
         public string UserEmail { get; set; }
+        public string UserDetailsJson { get; set; }
         public List<UserOrgMapDTO> UserOrgMapInfos { get; set;}
         public string JwtToken { get; set; } 
-        public string HeaderUserId { get; set; }
-        public string HeaderPassword { get; set; }
+        public bool IsSysAdmin { get; set; }
+        //public string HeaderUserId { get; set; }
+        //public string HeaderPassword { get; set; }
     }
 }

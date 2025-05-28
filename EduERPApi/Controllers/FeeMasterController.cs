@@ -1,4 +1,5 @@
-﻿using EduERPApi.DTO;
+﻿using EduERPApi.BusinessLayer;
+using EduERPApi.DTO;
 using EduERPApi.Infra;
 using EduERPApi.Repo;
 using EduERPApi.RepoImpl;
@@ -13,37 +14,23 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class FeeMasterController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-        IConfiguration _cfg;
+        Business _business;
 
-        public FeeMasterController(UnitOfWork unitOfWork, IConfiguration cfg)
+        public FeeMasterController(Business business)
         {
-            _unitOfWork = unitOfWork;
-            _cfg = cfg;
+            _business = business;
         }
+
         [HttpPost]
         //[Authorize(Roles = RoleConstents.SCHOOL_FEE_ADMIN_ROLE_GUID)]
         public IActionResult Add(FeeMasterDTO inp)
         {
             try
             {
-                var HeadInfo = _unitOfWork.FeeHeadMasterRepoImpl.GetById(inp.FHeadId);
-                if(HeadInfo!=null)
-                {
-                    inp.AddMode = HeadInfo.FeeType;
-                   int DuplicateRow= (_unitOfWork.FeeMasterRepoImpl as IRawRepo<FeeMasterDTO,int>).ExecuteRaw(inp);
-                    if(DuplicateRow==0)
-                    {
-                        Guid NewId = _unitOfWork.FeeMasterRepoImpl.Add(inp);
-                        _unitOfWork.SaveAction();
-                        return Ok(new { Status = 1, Data = NewId });
-                    }  
-                    else
-                    {
-                        return BadRequest(new { Status = 0, Data = 1102, Message = "Duplicate Row" });
-                    }
-                }
-                
+              (Guid newId,bool Res) Result=  _business.AddFeeMaster(inp);
+
+                if(Result.Res)
+                return Ok(new { Status = 1, Data = Result.newId });
             }
             catch(Exception ex)
             {
