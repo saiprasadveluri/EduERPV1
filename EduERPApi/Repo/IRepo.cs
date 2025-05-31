@@ -26,4 +26,9 @@ namespace EduERPApi.Repo
             return default(M);
         }
     }
+
+    public interface IExecuteRawSql
+    {
+        Object ExecuteSqlRaw(string sql);
+    }
 }

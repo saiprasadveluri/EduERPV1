@@ -24,7 +24,7 @@ namespace EduERPApi.RepoImpl
        
         IRepo<AppUserFeatureRoleMapDTO> _appUserFeatureRoleMapRepo;
         IRepo<FeatureRoleDTO> _featureRoleRepo;
-        IRepo<OrgnizationFeatureSubscriptionDTO> _orgnizationFeatureSubscriptionRepo;
+        OrgnizationFeatureSubscriptionRepoImpl _orgnizationFeatureSubscriptionRepo;
         UserOrgMapRepoImpl _userOrgMapRepo;
         IRepo<ModuleFeatureDTO> _moduleFeatureRepo;
         IRepo<StudentInfoDTO> _studentInfoRepo;
@@ -280,7 +280,7 @@ namespace EduERPApi.RepoImpl
             }
         }
 
-        public IRepo<OrgnizationFeatureSubscriptionDTO> OrgnizationFeatureSubscriptionRepo
+        public OrgnizationFeatureSubscriptionRepoImpl OrgnizationFeatureSubscriptionRepo
         {
             get
             {

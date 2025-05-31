@@ -17,14 +17,14 @@ namespace EduERPApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSubscription(OrgnizationFeatureSubscriptionDTO inp)
+        public async Task<IActionResult> AddSubscription(List<OrgnizationFeatureSubscriptionDTO> inp)
         {
             try
             {
                 //Check Org is of same Type (AppModuleType) as that of Feature
-                (Guid newSubscriptionId,bool Status) =_business.AddOrganizationFeatureSubscription(inp);
+               bool Status =_business.AddOrganizationFeatureSubscription(inp);
                 if(Status)
-                    return Ok(new { Status = 1, Data = newSubscriptionId });
+                    return Ok(new { Status = 1, Data = "Success" });
                
             }
             catch(Exception ex)
@@ -33,15 +33,22 @@ namespace EduERPApi.Controllers
             }
             return BadRequest(new { Status = 0, Data =501, Message = "Error In operation" });
         }
-        [HttpGet("{Moduleid}")]
-        public async Task<IActionResult> GetFeatures(Guid Moduleid)
+        
+        [HttpGet("{OrgId}")]
+        public async Task<IActionResult> GetAllFeatureByOrgId(Guid OrgId)
         {
-            var dto = _business.GetModuleFeatures(Moduleid);
-            if(dto.FeatureList!=null && dto.FeatureList.Count>0)
+            var Res = _business.GetAllOrgnizationFeatureSubscriptions(OrgId);
+            return Ok(new { Status = 1, Data = Res });
+        }
+        [HttpDelete("{SubIdIdArrayString}")]
+        public async Task<IActionResult> RemoveFeatureToOrg(string SubIdIdArrayString)
+        {
+           bool Status= _business.RemoveFeatureToOrg(SubIdIdArrayString);
+            if(Status)
             {
-                return Ok(new { Status = 1, Data = dto.FeatureList });
+                return Ok(new { Status = 1, Data = "Success" });
             }
-            return BadRequest(new { Status = 0, Data = 501, Message = "Error In operation" });
+            return BadRequest(new { Status = 0, Data = 502, Message = "Error In operation" });
         }
 
     }

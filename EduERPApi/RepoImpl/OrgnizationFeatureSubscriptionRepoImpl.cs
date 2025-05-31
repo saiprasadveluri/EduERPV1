@@ -2,6 +2,7 @@
 using EduERPApi.DTO;
 using EduERPApi.Repo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduERPApi.RepoImpl
 {
@@ -30,7 +31,14 @@ namespace EduERPApi.RepoImpl
 
         public bool Delete(Guid key)
         {
-            throw new NotImplementedException();
+            var SubObj = _context.OrgnizationFeatureSubscriptions.FirstOrDefault(SubObj => SubObj.SubId == key);
+            if(SubObj!=null)
+            {
+                _context.OrgnizationFeatureSubscriptions.Remove(SubObj);
+                return true;
+            }
+            return false;
+
         }
 
         public OrgnizationFeatureSubscriptionDTO GetById(Guid id)
@@ -54,6 +62,17 @@ namespace EduERPApi.RepoImpl
                            Status = obj.Status,
                            SubId = obj.SubId,
                        }).ToList();
+        }
+
+        public bool DeleteBulkByOrganization(UnSubscribeFeatureData data)
+        {
+            var SelObj = _context.OrgnizationFeatureSubscriptions.FirstOrDefault(obj => obj.OrgId == data.OrgId && obj.FeatureId == data.FeatureId);
+            if(SelObj!=null)
+            {
+                _context.OrgnizationFeatureSubscriptions.Remove(SelObj);
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace EduERPApi.DTO
 {
     public class OrgnizationFeatureSubscriptionDTO
     {
-        public Guid SubId { get; set; }
+        public Guid? SubId { get; set; }
         [Required]
         public Guid OrgId { get; set; }
         [Required]
