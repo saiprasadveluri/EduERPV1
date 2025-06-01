@@ -19,7 +19,8 @@ namespace EduERPApi.RepoImpl
                 UserEmail = item.UserEmail,
                 Password = item.Password,
                 DisplayName = item.DisplayName,
-                UserDetailsJson = item.UserDetailsJson
+                UserDetailsJson = item.UserDetailsJson,
+                Status=1
             };
             _context.UserInfos.Add(userInfo);
 

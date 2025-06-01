@@ -1,5 +1,6 @@
 ﻿using EduERPApi.DTO;
 using EduERPApi.RepoImpl;
+using System.Net.NetworkInformation;
 
 namespace EduERPApi.BusinessLayer
 {
@@ -11,17 +12,39 @@ namespace EduERPApi.BusinessLayer
             return _unitOfWork.UserInfoRepo.GetByParentId(Id);
         }
 
-        public ((Guid,Guid),bool) AddUserInfo(UserInfoDTO inp)
+        public (Guid,bool) AddUserInfo(UserInfoDTO inp)
         {
+            bool Status = true;
             Guid NewUserId = _unitOfWork.UserInfoRepo.Add(inp);
             Guid UserOrgMapId = _unitOfWork.UserOrgMapRepoImpl.Add(
-                new UserOrgMapDTO()
+                                new UserOrgMapDTO()
+                                {
+                                    OrgId = inp.OrgId,
+                                    UserId = NewUserId,
+                                    IsOrgAdmin = inp.IsOrgAdmin,
+
+                                });
+            if (inp.IsOrgAdmin==0)
+            {                
+                foreach(var FeatureRole in inp.FeatureRoleList)
                 {
-                    OrgId = inp.OrgId,
-                    UserId = NewUserId
-                });
-            bool Status=_unitOfWork.SaveAction();
-            return ((NewUserId, UserOrgMapId), Status);
+                    AppUserFeatureRoleMapDTO userFeatureroleDto = new AppUserFeatureRoleMapDTO()
+                    {
+                        AppUserRoleMapId = Guid.NewGuid(),
+                        FeatureRoleId = FeatureRole,
+                        OrgUserMapId = UserOrgMapId,
+                        Status = 1
+                    };
+                    (Guid mapId,bool opStatus) Res=AddOrgUserFeatureRoleMap(userFeatureroleDto);
+                    Status = Status && Res.opStatus;
+                }
+            }
+            if (Status)
+            {
+                Status = _unitOfWork.SaveAction();
+                return (NewUserId, Status);
+            }
+            return (Guid.Empty, false);
         }
     }
 }

@@ -19,7 +19,9 @@ namespace EduERPApi.RepoImpl
             {
                 UserOrgMapId = Guid.NewGuid(),
                 UserId = item.UserId,
-                OrgId = item.OrgId
+                OrgId = item.OrgId,
+                IsOrgAdmin=item.IsOrgAdmin
+
             };
             _context.UserOrgMaps.Add(userOrgMapObj);
             return userOrgMapObj.UserOrgMapId;
@@ -43,7 +45,8 @@ namespace EduERPApi.RepoImpl
                 {
                      UserOrgMapId = id,
                      OrgId=obj.OrgId,
-                     UserId=obj.UserId
+                     UserId=obj.UserId,
+                     IsOrgAdmin= obj.IsOrgAdmin
                 }).FirstOrDefault();
 
         }

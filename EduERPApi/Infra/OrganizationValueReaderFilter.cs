@@ -35,10 +35,8 @@ namespace EduERPApi.Infra
             }
             else
             {
-                context.Result = new ContentResult
-                {
-                    Content = "Error In Getting UserID and OrgID"
-                };
+                context.Result = new BadRequestObjectResult("Error In Getting Ids");
+                
 
             }
         }

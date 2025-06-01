@@ -19,6 +19,7 @@ namespace EduERPApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AccountController : ControllerBase
     {
         
@@ -49,7 +50,7 @@ namespace EduERPApi.Controllers
             }
         }
 
-        [Authorize]
+        
         [HttpPost("token")]
         public async Task<IActionResult> GetAccessToken(TokenRequestDTO dto)
         {

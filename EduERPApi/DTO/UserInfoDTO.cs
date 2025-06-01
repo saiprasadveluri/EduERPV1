@@ -17,6 +17,11 @@ namespace EduERPApi.DTO
         [MaxLength(500)]
         public string DisplayName { get; set; }
 
+        public List<Guid>? FeatureRoleList { get; set; }
+
+        [Required]
+        public int IsOrgAdmin { get; set; }
+
         public string UserDetailsJson { get; set; }
         
     }

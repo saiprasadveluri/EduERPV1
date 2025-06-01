@@ -221,6 +221,7 @@ namespace EduERPApi.Data
             modelBuilder.Entity<ExamType>().HasIndex(et => new { et.MainCourseId, et.ExamTypeName }).IsUnique(true);
 
             modelBuilder.Entity<ExamSchedule>().HasIndex(sc => new { sc.ExamId, sc.StreamSubjectMapId }).IsUnique(true);
+            modelBuilder.Entity<UserOrgMap>().Property(p => p.IsOrgAdmin).HasDefaultValue(0);
             //Seed Data.
             modelBuilder.SeedData();
         }

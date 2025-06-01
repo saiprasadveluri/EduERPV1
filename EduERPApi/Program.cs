@@ -14,7 +14,7 @@ using EduERPApi.BusinessLayer;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers(mvcOpts => { mvcOpts.Filters.Add<OrganizationValueReaderFilter>(); }).AddJsonOptions(options =>
+builder.Services.AddControllers(mvcOpts => { mvcOpts.Filters.Add<EduERPAuthorizationFilter>(); }).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions
     .PropertyNamingPolicy = null;
@@ -44,8 +44,8 @@ services.AddAuthentication(cfg =>
     ValidIssuer = Config.GetSection("JwtConfig:Issuer").Value,
     ValidAudience= Config.GetSection("JwtConfig:Audience").Value,
     IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.GetSection("JwtConfig:SigningKey").Value))
-}) ;
-services.AddAuthorization();
+});
+//services.AddAuthorization();
 services.AddCors(cfg =>
 {
     cfg.AddPolicy("AllowAll", pol =>
@@ -82,7 +82,7 @@ app.UseSession();
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthorization();
 app.MapControllers();
 /*app.MapControllerRoute(
     name: "default",

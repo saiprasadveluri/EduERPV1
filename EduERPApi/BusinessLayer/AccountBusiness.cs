@@ -4,6 +4,7 @@ using EduERPApi.Data;
 using EduERPApi.DTO;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,7 +17,7 @@ namespace EduERPApi.BusinessLayer
         public (LoginResultDTO, bool) ValidateUser(LoginDataDTO data)
         {
             (LoginResultDTO dto, bool Success) Res = _unitOfWork.AccountRepo.GetLoginResult(data);
-            if(Res.dto.UserDetailsJson.Length>0)
+            if(!String.IsNullOrEmpty(Res.dto.UserDetailsJson))
             {
                SysAdminData sysData= JsonSerializer.Deserialize<SysAdminData>(Res.dto.UserDetailsJson);
                 if(sysData.IsSysAdmin==1)
@@ -43,7 +44,9 @@ namespace EduERPApi.BusinessLayer
                 OrgId = dto.SelOrgId,
                 UserId = Guid.Parse(SavedUserId)
             });
-            return GenerateAccessToken(dto.SelOrgId.ToString(), SavedUserId, orgMapId);
+            var UserOrgMapObj=_unitOfWork.UserOrgMapRepoImpl.GetById(orgMapId);
+            
+            return GenerateAccessToken(dto.SelOrgId.ToString(), SavedUserId, orgMapId, UserOrgMapObj.IsOrgAdmin);
         }
 
         public string GetSysAdminAccessToken(Guid UserId)
@@ -56,24 +59,27 @@ namespace EduERPApi.BusinessLayer
         }
 
 
-        private string GenerateAccessToken(string OrgId, string UserID, Guid UserOrgMapId)
+        private string GenerateAccessToken(string OrgId, string UserID, Guid UserOrgMapId,int IsOrgAdmin)
         {
-            List<AppUserFeatureRoleMapDTO> RoleList = GetUserRoles(UserOrgMapId);
-            if(RoleList.Count==0)
+            List<AppUserFeatureRoleMapDTO> RoleList=null;
+            if (IsOrgAdmin != 1)
             {
-                throw new Exception("Access Roles Empty");
+                RoleList = GetUserRoles(UserOrgMapId);
+                if (RoleList.Count == 0)
+                {
+                    throw new Exception("Access Roles Empty");
+                }
             }
             
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.NameIdentifier, UserOrgMapId.ToString()));
-            claims.Add(new Claim("FeatureRoleData", JsonSerializer.Serialize(RoleList)));
+            if(RoleList!=null)
+                claims.Add(new Claim("FeatureRoleData", JsonSerializer.Serialize(RoleList)));
+            if (IsOrgAdmin == 1)
+                claims.Add(new Claim("IsOrgAdmin", "1"));
             claims.Add(new Claim("UserId", UserID));
             claims.Add(new Claim("OrgId", OrgId));
-
-            foreach (var role in RoleList)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.FeatureRoleId.ToString()));
-            }
+            
             return PrepareToken(claims);
         }
 

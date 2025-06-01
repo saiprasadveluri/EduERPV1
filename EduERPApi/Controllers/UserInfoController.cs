@@ -38,9 +38,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                ((Guid NewUserId,Guid UserOrgMapId), bool Status)= _businessObj.AddUserInfo(inp);
+                (Guid NewUserId, bool Status)= _businessObj.AddUserInfo(inp);
                 if(Status)
-                    return Ok(new { Status = 1, Data = new { NewUserId, UserOrgMapId } });
+                    return Ok(new { Status = 1, Data = NewUserId});
                
             }
             catch(Exception ex)

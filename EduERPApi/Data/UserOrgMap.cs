@@ -12,6 +12,8 @@ namespace EduERPApi.Data
         public Guid OrgId { get; set; }
         [Required]
         public Guid UserId { get; set; }
+        [Required]
+        public int IsOrgAdmin { get; set; }
         //Nav Props
         public Organization CurOrganization { get; set; }
         public UserInfo CurUserInfo { get; set; }

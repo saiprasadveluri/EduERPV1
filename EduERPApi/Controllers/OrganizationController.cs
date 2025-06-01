@@ -9,6 +9,7 @@ namespace EduERPApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class OrganizationController : ControllerBase
     {
         IConfiguration _cfg;
