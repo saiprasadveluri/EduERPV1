@@ -46,6 +46,7 @@ namespace EduERPApi.RepoImpl
              {    
                  FeatureName= featureobj.FeatureName,
                  RoleName= froles.RoleName,
+                 FeatureId=froles.FeatureId,
                  FeatureRoleId = obj.FeatureRoleId
              }).ToList();            
         }

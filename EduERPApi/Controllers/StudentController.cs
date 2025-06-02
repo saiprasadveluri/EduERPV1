@@ -11,6 +11,7 @@ namespace EduERPApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [FeatureAccessCheckFilter(RoleConstents.SCHOOL_STUDENT_MANAGEMENT_GUID)]
     public class StudentController : ControllerBase
     {
         IConfiguration _cfg;

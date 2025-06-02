@@ -13,6 +13,7 @@ namespace EduERPApi.DTO
         [Required]
         public Guid FeatureRoleId { get; set; }
 
+        public Guid FeatureId { get; set; }
         public string FeatureName { get; set; }
         public string RoleName { get; set; }
 

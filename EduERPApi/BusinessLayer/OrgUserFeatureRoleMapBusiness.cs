@@ -28,5 +28,16 @@ namespace EduERPApi.BusinessLayer
             }
             return (Guid.Empty, false);
         }
+
+        public List<Guid> GetAllUserAllowedFeatures(Guid OrgId,Guid UserId)
+        {
+            var UserOrgMapId = _unitOfWork.UserOrgMapRepoImpl.GetSelUserOrgMapIdObj(new UserOrgInfoDTO()
+            {
+                OrgId=OrgId,
+                UserId=UserId
+            });
+           var lst= _unitOfWork.AppUserFeatureRoleMapRepo.GetByParentId(UserOrgMapId);
+            return lst.Select(mp => mp.FeatureRoleId).ToList();
+        }
     }
 }
