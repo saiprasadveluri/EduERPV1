@@ -6,14 +6,14 @@ namespace EduERPApi.BusinessLayer
     {
         public List<MainCourseDTO> GetCoursesByOrgId()
         {
-            var OrgId = Guid.Parse(_context.Context.Session.GetString("OrgId"));
+            var OrgId = Guid.Parse(_context.GetSession<string>("OrgId"));
             var Res = _unitOfWork.MainCourseRepo.GetByParentId(OrgId);
             return Res;
         }
 
         public (Guid,bool) AddNewMainCourse(MainCourseDTO course)
         {
-            var SelOrgId = Guid.Parse(_context.Context.Session.GetString("OrgId"));
+            var SelOrgId = Guid.Parse(_context.GetSession<string>("OrgId"));
             course.OrgId = SelOrgId;
             Guid NewCourseId = _unitOfWork.MainCourseRepo.Add(course);
             if (course.IsSpecializationsAvailable == 0)

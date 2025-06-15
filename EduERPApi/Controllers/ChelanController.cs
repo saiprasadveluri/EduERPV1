@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.InkML;
 using EduERPApi.AdhocData;
+using EduERPApi.BusinessLayer;
 using EduERPApi.Data;
 using EduERPApi.DTO;
 using EduERPApi.Infra;
@@ -15,11 +16,11 @@ namespace EduERPApi.Controllers
     [ApiController]
     public class ChelanController : ControllerBase
     {
-        UnitOfWork _unitOfWork;
-
-        public ChelanController(UnitOfWork unitOfWork)
+        //UnitOfWork _unitOfWork;
+        Business _businesss;
+        public ChelanController(Business businesss)// UnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _businesss = businesss;
         }
 
         [HttpGet("List/{Mapid}")]
@@ -27,8 +28,9 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var chlnInfo = _unitOfWork.ChalanRepo.GetByParentId(Mapid);
-                
+                var chlnInfo = _businesss.GetChalanList(Mapid);//_unitOfWork.ChalanRepo.GetByParentId(Mapid);
+
+
                 return Ok(new { Status = 1, Data = chlnInfo });
 
             }
@@ -43,10 +45,10 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var ChalanDTO = _unitOfWork.ChalanRepo.GetById(ChlnId);
+                var ChalanDTO = _businesss.GetChalanDetails(ChlnId);// /_unitOfWork.ChalanRepo.GetById(ChlnId);
                 if (ChalanDTO != null)
                 {
-                    var chlnInfo = _unitOfWork.ChalanLineInfoRepo.GetByParentId(ChalanDTO.ChlnId);
+                    var chlnInfo = _businesss.GetChalanInfoByParentId(ChalanDTO.ChlnId);//_unitOfWork.ChalanLineInfoRepo.GetByParentId(ChalanDTO.ChlnId);
                     ChalanDTO.info = chlnInfo;
                     return Ok(new { Status = 1, Data = ChalanDTO });
                 }
@@ -62,9 +64,20 @@ namespace EduERPApi.Controllers
             }
             return BadRequest(new { Status = 0, Data = 1402, Message = "Error In Getting Chalan Info" });
         }
-        [HttpGet]
-        public ActionResult GenerateClassChalans(Guid CDetId, Guid AcdId, int TermNumber)
+        [HttpPost]
+        public ActionResult GenerateClassChalans(GenerateClassChalansDTO  dto)//Guid CDetId, Guid AcdId, int TermNumber)
         {
+            bool Status=_businesss.GenerateClassChalans(dto.CDetId, dto.AcdId, dto.TermNumber);
+            if(Status)
+            {
+                return Ok(new { Status = 1, Data = "Success" });
+            }
+            else
+            {
+                return BadRequest(new { Status = 0, Data = 1402, Message = "Error In Generating Chalan Info" });
+            }
+        }
+        /*{
             List<ChalanDTO> ResChalansDToList = new List<ChalanDTO>();
 
             bool Success = false;
@@ -88,7 +101,7 @@ namespace EduERPApi.Controllers
                 };
                 var ReqStr2 = JsonConvert.SerializeObject(updateChalansStatusReq);
                 string ResStr2 = _unitOfWork.AdhocLogicRepo.ExecuteCommand(OperationCodeEnum.DEACTIVEATE_CHALANS, ReqStr2);
-                var obj=JsonConvert.DeserializeObject(ResStr2);
+                //var obj=JsonConvert.DeserializeObject(ResStr2);
                 foreach (var sobj in StuData)
                 {                    
                     ChalanDTO cdto = new ChalanDTO();
@@ -138,11 +151,11 @@ namespace EduERPApi.Controllers
                 {
                     try
                     {
-                        _unitOfWork.BeginTransaction();
+                       _unitOfWork.BeginTransaction();
                         ((ChalanRepoImpl)(_unitOfWork.ChalanRepo)).CurTransaction = _unitOfWork.GetCurrentTransaction();
                         _unitOfWork.ChalanRepo.Add(chln);
                         _unitOfWork.SaveAction();
-                        _unitOfWork.CommitTransaction();
+                       _unitOfWork.CommitTransaction();
 
                     }
                     catch (Exception exp)
@@ -167,6 +180,6 @@ namespace EduERPApi.Controllers
                 return BadRequest(new { Status = 0, Data = 1401, Message = "Error In Generating Chalans" });
 
             }
-        }
+        }*/
     }
 }

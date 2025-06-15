@@ -11,7 +11,8 @@ namespace EduERPApi.BusinessLayer
 
         public (Guid,bool) AddFeeHeadMaster(FeeHeadMasterDTO inp)
         {
-            Guid SelOrgId = Guid.Parse(_context.GetSession<string>("OrgId"));
+            string SelOrgIdString = _context.GetSession<string>("OrgId");
+            Guid SelOrgId = Guid.Parse(SelOrgIdString);
             inp.OrgId = SelOrgId;
             Guid NewFeeHeadId = _unitOfWork.FeeHeadMasterRepoImpl.Add(inp);
             bool Status=_unitOfWork.SaveAction();

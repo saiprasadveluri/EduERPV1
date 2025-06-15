@@ -123,15 +123,14 @@ namespace EduERPApi.BusinessLayer
 
         private string ReadUserIDFromJWTToken()
         {
-            StringValues AuthString;
-            bool AuthStringPresent = _context.Context.Request.Headers.TryGetValue("Authorization", out AuthString);
-
-            string[] ValueArray = AuthString.ToArray();
-            if (ValueArray.Length == 0)
+            
+            (StringValues AuthString, bool AuthStringPresent) = _context.GetHeaderValues("Authorization");
+                       
+            if (AuthString.Count == 0)
             {
                 return null;
             }
-            string HeaderValue = ValueArray[0];
+            string HeaderValue = AuthString[0];
             string[] AuthHeaderValues = HeaderValue.Split(' ');
             var stream = AuthHeaderValues[1];
             var handler = new JwtSecurityTokenHandler();

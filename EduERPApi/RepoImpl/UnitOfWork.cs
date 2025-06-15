@@ -35,7 +35,7 @@ namespace EduERPApi.RepoImpl
         
         IRepo<StudentYearStreamMapDTO> _studentYearStreamMapRepo;
         IAdhocLogicRepo _adhocLogicRepo;
-        IRepo<ChalanDTO> _chalanRepo;
+        ChalanRepoImpl _chalanRepo;
         IRepo<ChalanInfoDTO> _chalanLineInfoRepo;
         IRepo<SubjectDTO> _subjectRepo;
 
@@ -178,7 +178,7 @@ namespace EduERPApi.RepoImpl
             }
         }
 
-        public IRepo<ChalanDTO> ChalanRepo
+        public ChalanRepoImpl ChalanRepo
         {
             get
             {

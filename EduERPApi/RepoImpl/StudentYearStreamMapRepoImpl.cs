@@ -17,7 +17,7 @@ namespace EduERPApi.RepoImpl
         {
             var Temp = (from obj in _context.StudentYearStreamMaps
                         join StuObj in _context.StudentInfos on obj.StudentId equals StuObj.StudentId
-                        where obj.StudentYearStreamMapId==parentId
+                        where obj.CourseStreamId == parentId
                         select new StudentYearStreamMapDTO()
                         {
                             StudentYearStreamMapId = obj.StudentYearStreamMapId,

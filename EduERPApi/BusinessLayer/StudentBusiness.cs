@@ -8,7 +8,7 @@ namespace EduERPApi.BusinessLayer
     {
         public bool StudentBulkAdd([FromForm] BulkStudentInfoDTO inp)
         {
-            var SelOrgId = Guid.Parse(_context.Context.Session.GetString("OrgId"));
+            var SelOrgId = Guid.Parse(_context.GetSession<string>("OrgId"));
             if (inp.inpFile != null)
             {
                 string StructureFileName = _cfg.GetValue<string>("EntityStructurePath:StudentInfoStructure");
@@ -42,7 +42,7 @@ namespace EduERPApi.BusinessLayer
         }
         public (Guid,bool) AddStudent(StudentInfoDTO inp)
         {
-            inp.OrgId = Guid.Parse(_context.Context.Session.GetString("OrgId"));
+            inp.OrgId = Guid.Parse(_context.GetSession<string>("OrgId"));
             Guid NewStudentId = _unitOfWork.StudentInfoRepo.Add(inp);
             return (NewStudentId, true);
         }

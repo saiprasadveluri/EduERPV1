@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using Azure.Core;
+using Microsoft.Extensions.Primitives;
+using System.Text.Json;
 using System.Text.Unicode;
 namespace EduERPApi.Infra
 {
@@ -10,12 +12,16 @@ namespace EduERPApi.Infra
         {
             _httpContextAccessor = httpContextAccessor;
         }
-
-        public HttpContext Context
+       
+        public (StringValues,bool) GetHeaderValues(string key)
         {
-            get { return _httpContextAccessor.HttpContext; }
+            bool Present = _httpContextAccessor.HttpContext.Request.Headers.TryGetValue(key, out StringValues vals);
+            return (vals, Present);
         }
-
+        public void RemoveSession(string key)
+        {
+            _httpContextAccessor.HttpContext.Session.Remove(key);
+        }
         public void SetSession(string key, object value)
         {
             string ObjJson=JsonSerializer.Serialize(value);

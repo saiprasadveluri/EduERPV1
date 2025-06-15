@@ -4,6 +4,7 @@ using EduERPApi.BusinessLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,9 +16,11 @@ namespace EduERPApi.Infra
         string[] BypassedControllers = { "Organization", "Account", "OrgnizationFeatureSubscription", "ModuleFeature" };
         const int SYS_ADMIN = 1, ORG_ADMIN = 1;
         Business _busines;
-        public EduERPAuthorizationFilter(Business business)
+        ContextHelper _contextHelper;
+        public EduERPAuthorizationFilter(Business business, ContextHelper contextHelper)
         {
             _busines = business;
+            _contextHelper = contextHelper;
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
@@ -38,8 +41,9 @@ namespace EduERPApi.Infra
             {
                 return;
             }
-            context.HttpContext.Session.Remove("UserId");
-            context.HttpContext.Session.Remove("OrgId");
+            _contextHelper.RemoveSession("UserId");
+            _contextHelper.RemoveSession("OrgId");
+           
 
             var authStringVals = context.HttpContext.Request.Headers["Authorization"];
             if(authStringVals.Count()!=1)
@@ -60,8 +64,11 @@ namespace EduERPApi.Infra
                 {
                     context.HttpContext.Session.SetString("IsOrgAdmin", "1");                
                 }
-                context.HttpContext.Session.SetString("UserID", UserId);
-                context.HttpContext.Session.SetString("OrgId", OrgId);
+                _contextHelper.SetSession("UserID", UserId);
+                _contextHelper.SetSession("OrgId", OrgId);
+
+               
+                
                 SetFetuareRoleAccessSession(context.HttpContext,Guid.Parse(OrgId), Guid.Parse(UserId), IsOrgAdmin);
 
                 return;
