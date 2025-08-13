@@ -1,5 +1,6 @@
 ﻿using EduERPApi.BusinessLayer;
 using EduERPApi.DTO;
+using EduERPApi.Infra;
 using EduERPApi.RepoImpl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +12,20 @@ namespace EduERPApi.Controllers
     public class SubjectController : ControllerBase
     {
         Business _business;
-
-        public SubjectController(Business business)
+        ContextHelper _contextHelper;
+        public SubjectController(Business business, ContextHelper contextHelper)
         {
             _business = business;
+            _contextHelper = contextHelper;
         }
         [HttpGet]
         public IActionResult GetAll()
         {
             try
             {
-                var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                var Res= _business.GetAllSubjectsByOrganization(SelOrgId);
-                
+                var OrgId = _contextHelper.GetSession<string>("OrgId");//Guid.Parse(HttpContext.Session.GetString("OrgId"));
+                var SelOrgId = Guid.Parse(OrgId);
+                var Res= _business.GetAllSubjectsByOrganization(SelOrgId);                
                 return Ok(new { Status = 1, Data = Res });
             }
             catch (Exception ex)
@@ -37,8 +39,8 @@ namespace EduERPApi.Controllers
         {
             try
             {
-                var SelOrgId = Guid.Parse(HttpContext.Session.GetString("OrgId"));
-                dto.OrgId = SelOrgId;
+                var SelOrgId = _contextHelper.GetSession<string>("OrgId");//Guid.Parse(HttpContext.Session.GetString("OrgId"));
+                dto.OrgId = Guid.Parse(SelOrgId);
                 (Guid SubId,bool Status) = _business.AddSubject(dto);
                 if(Status)
                 return Ok(new { Status = 1, Data = SubId });

@@ -42,7 +42,8 @@ namespace EduERPApi.BusinessLayer
             }
             else
             {
-                return (Guid.Empty, false);
+                _unitOfWork.SaveAction();
+                return (NewCourseId, true);
             }
         }
     }
